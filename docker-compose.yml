@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  trust-api:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - trust-api

@@ -1,0 +1,14 @@
+flask
+flask-cors
+torch
+transformers==4.40.1
+tiktoken
+pillow
+pytesseract
+pdfplumber
+PyMuPDF
+numpy<2.0
+optimum
+tools
+gptqmodel
+bitsandbytes
