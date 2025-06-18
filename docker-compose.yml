@@ -4,10 +4,7 @@ services:
   trust-api:
     build: ./backend
     ports:
-      - "5000:5000"
-    runtime: nvidia
-    environment:
-      - NVIDIA_VISIBLE_DEVICES=all
+      - "8080:5000"
     volumes:
       - ./backend:/app
 

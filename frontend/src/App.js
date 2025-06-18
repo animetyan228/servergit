@@ -24,7 +24,7 @@ function App() {
     formData.append('file', file);
 
     try {
-      const res = await fetch("http://localhost:5000/", {
+      const res = await fetch("http://45.12.134.146:8080", {
         method: 'POST',
         body: formData,
       });

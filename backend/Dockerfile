@@ -1,4 +1,4 @@
-FROM nvidia/cuda:12.2.0-runtime-ubuntu22.04
+FROM python:3.10-slim
 
 WORKDIR /app
 
@@ -6,20 +6,18 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get install -y \
-    python3 python3-pip \
     tesseract-ocr tesseract-ocr-rus \
-    poppler-utils build-essential libglib2.0-0 libsm6 libxext6 libxrender-dev \
+    poppler-utils \
+    build-essential \
+    libglib2.0-0 libsm6 libxext6 libxrender-dev \
     && apt-get clean
 
 COPY requirements.txt .
 
-RUN pip3 install --upgrade pip
-
-RUN grep -v gptqmodel requirements.txt > requirements_no_gptqmodel.txt && \
-    pip3 install --no-cache-dir -r requirements_no_gptqmodel.txt
-
-RUN pip3 install --no-cache-dir gptqmodel
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["python3", "app.py"]
+# Используем Gunicorn для запуска
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app", "--timeout", "300", "--workers", "1"]

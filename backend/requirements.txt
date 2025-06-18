@@ -10,5 +10,5 @@ PyMuPDF
 numpy<2.0
 optimum
 tools
-gptqmodel
-bitsandbytes
+accelerate
+gunicorn
