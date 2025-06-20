@@ -20,4 +20,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Используем Gunicorn для запуска
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app", "--timeout", "300", "--workers", "1"]
+CMD bash -c "celery -A tasks worker --loglevel=info & gunicorn -b 0.0.0.0:5000 app:app --timeout 300 --workers 1"

@@ -1,12 +1,26 @@
-version: "3.9"
-
 services:
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
   trust-api:
     build: ./backend
+    command: gunicorn app:app --bind 0.0.0.0:5000 --timeout 300 --workers 1
     ports:
       - "8080:5000"
     volumes:
       - ./backend:/app
+    depends_on:
+      - redis
+
+  celery-worker:
+    build: ./backend
+    command: celery -A celery_worker.celery worker --loglevel=info
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - redis
 
   frontend:
     build: ./frontend

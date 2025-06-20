@@ -12,3 +12,5 @@ optimum
 tools
 accelerate
 gunicorn
+celery
+redis
