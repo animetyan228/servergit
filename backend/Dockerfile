@@ -6,10 +6,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get install -y \
-    tesseract-ocr tesseract-ocr-rus \
-    poppler-utils \
-    build-essential \
-    libglib2.0-0 libsm6 libxext6 libxrender-dev \
+      tesseract-ocr tesseract-ocr-rus \
+      poppler-utils \
+      build-essential \
+      libglib2.0-0 libsm6 libxext6 libxrender-dev \
     && apt-get clean
 
 COPY requirements.txt .
@@ -19,5 +19,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Используем Gunicorn для запуска
-CMD bash -c "celery -A tasks worker --loglevel=info & gunicorn -b 0.0.0.0:5000 app:app --timeout 300 --workers 1"
+CMD bash -c "\
+  celery -A tasks worker --loglevel=info & \
+  gunicorn -b 0.0.0.0:5000 app:app --timeout 300 --workers 1\
+"

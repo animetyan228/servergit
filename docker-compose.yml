@@ -1,30 +1,53 @@
 services:
   redis:
     image: redis:7
+    restart: unless-stopped
     ports:
       - "6379:6379"
 
   trust-api:
-    build: ./backend
-    command: gunicorn app:app --bind 0.0.0.0:5000 --timeout 300 --workers 1
+    build:
+      context: ./backend
+    command: >
+      gunicorn app:app
+      --bind 0.0.0.0:5000
+      --workers 1
+      --timeout 300
     ports:
       - "8080:5000"
     volumes:
       - ./backend:/app
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
     depends_on:
       - redis
+    restart: unless-stopped
 
   celery-worker:
-    build: ./backend
-    command: celery -A celery_worker.celery worker --loglevel=info
+    build:
+      context: ./backend
+    command: >
+      celery -A tasks worker
+      --concurrency=1
+      --loglevel=info
     volumes:
       - ./backend:/app
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
     depends_on:
       - redis
+    restart: unless-stopped
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
     ports:
       - "3000:80"
     depends_on:
       - trust-api
+    restart: unless-stopped
+
+volumes:
+  hf_cache: {}
